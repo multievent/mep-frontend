@@ -6,11 +6,14 @@ import Pagination from 'components/Pagination'
 import { EVENT_TYPES } from 'pages/EventType/data'
 import ChainLogo from 'components/ChainLogo'
 import { getEtherscanLink, shortenAddress } from 'utils'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Copy from 'components/essential/Copy'
 import { useTxInfo } from 'hooks/useTxInfo'
 import { ChainId } from 'constants/chain'
 import { ExternalLink } from 'theme/components'
+import { useEventList } from 'hooks/useFetch'
+import ReactJson from 'react-json-view'
+import Spinner from 'components/Spinner'
 
 const StyledBetween = styled(Box)({
   display: 'flex',
@@ -32,52 +35,17 @@ export interface MEPListProp {
   contractAddress: string
   hash: string
   sender: string
-  eventInfo: string
+  eventMsg: string
 }
 
-const dataList: MEPListProp[] = [
-  {
-    timeStamp: 1653126585,
-    eventType: EVENT_TYPES.MAKE_ORDER,
-    chainId: 4,
-    contractAddress: '0x6b80c5c39561be295e0b07313e5b83c55e7f4db8',
-    hash: '0xc5ec0c115b0a11c9dc1716df28e7e8baf5bdde3111622983df1ccfd5a79524e1',
-    sender: '0xBa1aAe6ef4E2483E542dF954020173b1BCd072d6',
-    eventInfo: `{"event": "transfer"}`
-  },
-  {
-    timeStamp: 1653026585,
-    eventType: EVENT_TYPES.MAKE_ORDER,
-    chainId: 4,
-    contractAddress: '0x6b80c5c39561be295e0b07313e5b83c55e7f4db8',
-    hash: '0xc5ec0c115b0a11c9dc1716df28e7e8baf5bdde3111622983df1ccfd5a79524e1',
-    sender: '0xBa1aAe6ef4E2483E542dF954020173b1BCd072d6',
-    eventInfo: `{"event": "transfer"}`
-  },
-  {
-    timeStamp: 1651126585,
-    eventType: EVENT_TYPES.TAKEN_ORDER,
-    chainId: 42,
-    contractAddress: '0x085e40def42b27e804c019311c74b1a4675baefa',
-    hash: '0xc365cbc85240a1974ca6368240d8f8d7349dad348ae4744033674b6b375f4137',
-    sender: '0x18041866663b077bb6bf2baffaea2451a2472ed7',
-    eventInfo: `{"event": "transfer"}`
-  },
-  {
-    timeStamp: 1651124585,
-    eventType: EVENT_TYPES.WITHDRAW_ALL,
-    chainId: 97,
-    contractAddress: '0x085e40def42b27e804c019311c74b1a4675baefa',
-    hash: '0x3c06dec4b35a3a24d69a299530e6ed111663bd1f857e5adfd69f2b6f8df8f011',
-    sender: '0x18041866663b077bb6bf2baffaea2451a2472ed7',
-    eventInfo: `{"event": "transfer"}`
-  }
-]
-
 export default function Index() {
+  const { list: dataList, page, firstLoading } = useEventList()
+  const [timeIndex, setTimeIndex] = useState(0)
+
   const rows = useMemo(() => {
+    setTimeout(() => setTimeIndex(timeIndex + 1), 1000)
     return dataList.map(item => [
-      <ShowTime key={0} showTime timeStamp={item.timeStamp} />,
+      <ShowTime key={0} showTime timeIndex={timeIndex} timeStamp={item.timeStamp} />,
       item.eventType,
       <ChainLogo key={0} gapSize="6px" chainId={item.chainId} size="14px" fontSize="14" fontWeight={500} />,
       <Box key={1} display="flex" gap={2}>
@@ -89,11 +57,14 @@ export default function Index() {
         <Copy toCopy={item.sender} />
       </Box>
     ])
-  }, [])
+  }, [dataList, timeIndex])
 
   const TxDetailRows = useMemo(
-    () => dataList.map(({ hash, chainId }) => <TxDetail chainId={chainId} key={hash} hash={hash} />),
-    []
+    () =>
+      dataList.map(({ hash, chainId, eventMsg }) => (
+        <TxDetail eventMsg={eventMsg} chainId={chainId} key={hash} hash={hash} />
+      )),
+    [dataList]
   )
 
   return (
@@ -117,15 +88,29 @@ export default function Index() {
           rows={rows}
           variant="outlined"
         />
-        <Box mt={10}>
-          <Pagination perPage={4} count={1} page={1} boundaryCount={0} onChange={(_, value) => console.log(value)} />
-        </Box>
+        {firstLoading && (
+          <Box display="flex" pt={20} pb={20} justifyContent="center">
+            <Spinner size="40px" />
+          </Box>
+        )}
+        {!firstLoading && (
+          <Box mt={10}>
+            <Pagination
+              perPage={page.perPage}
+              count={page.totalPages}
+              total={page.recordCount}
+              page={page.page}
+              boundaryCount={0}
+              onChange={(_, p) => page.setPage(p)}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   )
 }
 
-function TxDetail({ hash, chainId }: { hash: string; chainId: ChainId }) {
+function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId; eventMsg: string }) {
   const info = useTxInfo(chainId, hash)
 
   return (
@@ -163,7 +148,12 @@ function TxDetail({ hash, chainId }: { hash: string; chainId: ChainId }) {
         <span>Nonce</span>
         <span>{info?.nonce}</span>
       </StyledBetween>
-      <Box width={'100%'}>
+      <Box
+        width={'100%'}
+        sx={{
+          overflow: 'auto'
+        }}
+      >
         <Box>Event message </Box>
         <Box
           sx={{
@@ -171,25 +161,18 @@ function TxDetail({ hash, chainId }: { hash: string; chainId: ChainId }) {
             padding: '10px',
             borderRadius: '8px',
             maxWidth: '100%',
-            overflow: 'auto',
-            whiteSpace: 'pre-wrap'
+            overflow: 'auto'
+            // whiteSpace: 'pre-wrap'
           }}
-        >{`<script type="text/javascript">
-	$(document).ready(function(){
-	  
-		  $(".aaa").click(function(){
-		 		 alert("");
-		  });
-		  //
-		  $(".aaa").mouseover(function(){
-		 		$(this).css("background-color","#0060ff");
-		 `}</Box>
+        >
+          <ReactJson src={JSON.parse(eventMsg)} />
+        </Box>
       </Box>
     </Box>
   )
 }
 
-function ShowTime({ timeStamp, showTime }: { timeStamp: number; showTime?: boolean }) {
+function ShowTime({ timeStamp, showTime, timeIndex }: { timeStamp: number; showTime?: boolean; timeIndex: number }) {
   const str = useMemo(() => {
     const now = Math.ceil(new Date().getTime() / 1000)
     const gap = now - timeStamp
@@ -203,7 +186,8 @@ function ShowTime({ timeStamp, showTime }: { timeStamp: number; showTime?: boole
       return `${Number(gap / 3600).toFixed()} hrs ago`
     }
     return `${Number(gap / 86400).toFixed()} days ago`
-  }, [timeStamp])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeStamp, timeIndex])
 
   if (showTime) {
     return (

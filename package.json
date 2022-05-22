@@ -105,6 +105,7 @@
     "dayjs": "^1.10.8",
     "decimal.js-light": "^2.5.1",
     "jsbi": "^4.0.0",
+    "react-json-view": "^1.21.3",
     "toformat": "^2.0.0",
     "web3": "^1.7.3"
   }
