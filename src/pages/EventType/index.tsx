@@ -5,7 +5,7 @@ import makeIcon from 'assets/svg/make_order.svg'
 import takeIcon from 'assets/svg/take_order.svg'
 import withdrawIcon from 'assets/svg/withdraw_all.svg'
 import { useMemo, useState } from 'react'
-import { ChainList } from 'constants/chain'
+import { ChainId, ChainList, SUPPORTED_NETWORKS } from 'constants/chain'
 import ChainLogo from 'components/ChainLogo'
 import RoundTabs from 'components/Tabs/RoundTabs'
 import { eventList, EventProp, EVENT_TYPES } from './data'
@@ -44,6 +44,10 @@ export default function Index() {
 
 function EventCard({ item }: { item: EventProp }) {
   const theme = useTheme()
+  const symbol = useMemo(() => {
+    const chain = SUPPORTED_NETWORKS[item.chainId as ChainId]
+    return chain?.nativeCurrency.symbol || ''
+  }, [item.chainId])
   return (
     <Box
       padding="20px 30px 30px"
@@ -85,13 +89,41 @@ function EventCard({ item }: { item: EventProp }) {
         <Typography mb={6} fontSize={14} fontWeight={500}>
           event detail:
         </Typography>
-        <Box>
-          <Typography color={'#252525B2'} fontSize={12} fontWeight={500}>
-            chainid: {item.chainId}
-          </Typography>
-          <Typography color={'#252525B2'} fontSize={12} fontWeight={500} sx={{ wordBreak: 'break-all' }}>
-            address: {item.address}
-          </Typography>
+        <Box
+          sx={{
+            fontSize: 14,
+            color: '#252525B2',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr'
+            // '&>span:nth-child(even)': {
+            //   textAlign: 'right'
+            // }
+          }}
+        >
+          <>
+            <span>Transaction Hash: </span>
+            <span>string</span>
+          </>
+          <>
+            <span>Address: </span>
+            <span>ether address</span>
+          </>
+          <>
+            <span>Height: </span>
+            <span>number</span>
+          </>
+          <>
+            <span>Transaction Fee: </span>
+            <span>{symbol}</span>
+          </>
+          <>
+            <span>Nonce: </span>
+            <span>number</span>
+          </>
+          <>
+            <span>Event message: </span>
+            <span>json</span>
+          </>
         </Box>
       </Box>
     </Box>
