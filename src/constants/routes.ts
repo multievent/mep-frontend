@@ -1,4 +1,5 @@
 export const routes = {
   eventType: '/event_type',
-  mep: '/mep'
+  mep: '/mep',
+  dapp: '/dapp'
 }

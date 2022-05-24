@@ -9,6 +9,7 @@ import WarningModal from '../components/Modal/WarningModal'
 // import ComingSoon from './ComingSoon'
 import EventType from './EventType'
 import MEP from './Mep'
+import DAPP from './Dapp'
 import { ModalProvider } from 'context/ModalContext'
 // import Footer from 'components/Footer'
 import { routes } from 'constants/routes'
@@ -72,6 +73,7 @@ export default function App() {
                 <Switch>
                   <Route exact strict path={routes.eventType} component={EventType} />
                   <Route exact strict path={routes.mep} component={MEP} />
+                  <Route exact strict path={routes.dapp} component={DAPP} />
                   <Route path="/">
                     <Redirect to={routes.eventType} />
                   </Route>

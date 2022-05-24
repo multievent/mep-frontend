@@ -406,6 +406,7 @@ function MobileCardCollapsible({ collapsible, hiddenPart }: { collapsible?: bool
           borderBottomRightRadius: 16,
           borderBottomLeftRadius: 16,
           width: '100%',
+          overflow: 'auto',
           marginTop: -8
         }}
       >

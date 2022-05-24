@@ -1,32 +1,31 @@
-import { Box, styled, Tooltip } from '@mui/material'
+import { Box, Link, Tooltip } from '@mui/material'
 import LogoText from 'components/LogoText'
 import mepMenuIcon from 'assets/images/mep_icon.svg'
 import Table from 'components/Table'
 import Pagination from 'components/Pagination'
 import { EVENT_TYPES } from 'pages/EventType/data'
-import ChainLogo from 'components/ChainLogo'
-import { getEtherscanLink, shortenAddress } from 'utils'
+// import ChainLogo from 'components/ChainLogo'
+import { shortenAddress } from 'utils'
 import { useMemo, useState } from 'react'
 import Copy from 'components/essential/Copy'
 import { useTxInfo } from 'hooks/useTxInfo'
-import { ChainId } from 'constants/chain'
-import { ExternalLink } from 'theme/components'
+import { ChainId, ChainListMap } from 'constants/chain'
 import { useEventList } from 'hooks/useFetch'
 import ReactJson from 'react-json-view'
 import Spinner from 'components/Spinner'
 
-const StyledBetween = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-  '& *': {
-    wordBreak: 'break-all',
-    whiteSpace: 'initial'
-  }
-})
+// const StyledBetween = styled(Box)({
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'space-between',
+//   flexWrap: 'wrap',
+//   '& *': {
+//     wordBreak: 'break-all',
+//     whiteSpace: 'initial'
+//   }
+// })
 
-export const MarketTableHeader = ['Time', 'Events Type', 'Chain', 'Contract address', 'Sender', '']
+export const MarketTableHeader = ['Events Type', 'Contract address', 'Sender', 'Time', '']
 
 export interface MEPListProp {
   timeStamp: number
@@ -45,17 +44,20 @@ export default function Index() {
   const rows = useMemo(() => {
     setTimeout(() => setTimeIndex(timeIndex + 1), 1000)
     return dataList.map(item => [
-      <ShowTime key={0} showTime timeIndex={timeIndex} timeStamp={item.timeStamp} />,
-      item.eventType,
-      <ChainLogo key={0} gapSize="6px" chainId={item.chainId} size="14px" fontSize="14" fontWeight={500} />,
+      ChainListMap[item.chainId].symbol + '_' + item.eventType,
       <Box key={1} display="flex" gap={2}>
         {shortenAddress(item.contractAddress)}
         <Copy toCopy={item.contractAddress} />
       </Box>,
+      // <ChainLogo key={0} gapSize="6px" chainId={item.chainId} size="14px" fontSize="14" fontWeight={500} />,
       <Box key={1} display="flex" gap={2}>
-        {shortenAddress(item.sender)}
-        <Copy toCopy={item.sender} />
-      </Box>
+        <Link target={'_blank'} color="#13B5EC" underline="hover" href={'https://demo.matchprotocol.xyz/'}>
+          MatchProtocol
+        </Link>
+        {/* {shortenAddress(item.sender)}
+        <Copy toCopy={item.sender} /> */}
+      </Box>,
+      <ShowTime key={0} showTime timeIndex={timeIndex} timeStamp={item.timeStamp} />
     ])
   }, [dataList, timeIndex])
 
@@ -110,8 +112,81 @@ export default function Index() {
   )
 }
 
+// function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId; eventMsg: string }) {
+//   const info = useTxInfo(chainId, hash)
+
+//   return (
+//     <Box
+//       sx={{
+//         fontWeight: 500,
+//         fontSize: 14,
+//         display: 'grid',
+//         gap: '15px',
+//         width: '100%'
+//       }}
+//     >
+//       <StyledBetween>
+//         <span>Transaction Hash</span>
+//         <Box>
+//           <ExternalLink target="_blank" underline={'hover'} href={getEtherscanLink(chainId, hash, 'transaction')}>
+//             {hash}
+//           </ExternalLink>
+//           <Copy toCopy={hash} />
+//         </Box>
+//       </StyledBetween>
+//       <StyledBetween>
+//         <span>Transaction Fee</span>
+//         <Box display={'flex'} gap="5">
+//           <span>
+//             {info?.fee?.toSignificant(18)} {info?.nativeSymbol}
+//           </span>
+//         </Box>
+//       </StyledBetween>
+//       <StyledBetween>
+//         <span>Height</span>
+//         <span>{info?.height}</span>
+//       </StyledBetween>
+//       <StyledBetween>
+//         <span>Nonce</span>
+//         <span>{info?.nonce}</span>
+//       </StyledBetween>
+//       <Box
+//         width={'100%'}
+//         sx={{
+//           overflow: 'auto'
+//         }}
+//       >
+//         <Box>Event message </Box>
+//         <Box
+//           sx={{
+//             background: '#F3F3F3',
+//             padding: '10px',
+//             borderRadius: '8px',
+//             maxWidth: '100%',
+//             overflow: 'auto'
+//             // whiteSpace: 'pre-wrap'
+//           }}
+//         >
+//           <ReactJson src={JSON.parse(eventMsg)} />
+//         </Box>
+//       </Box>
+//     </Box>
+//   )
+// }
+
 function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId; eventMsg: string }) {
   const info = useTxInfo(chainId, hash)
+
+  const showJson = useMemo(() => {
+    return {
+      chainId: chainId,
+      hash: hash,
+      fee: info.fee?.toSignificant(18) || undefined,
+      height: info.height || undefined,
+      nonce: info.nonce || undefined,
+      eventMessage: JSON.parse(eventMsg)
+    }
+  }, [chainId, eventMsg, hash, info.fee, info.height, info.nonce])
 
   return (
     <Box
@@ -123,38 +198,12 @@ function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId;
         width: '100%'
       }}
     >
-      <StyledBetween>
-        <span>Transaction Hash</span>
-        <Box>
-          <ExternalLink target="_blank" underline={'hover'} href={getEtherscanLink(chainId, hash, 'transaction')}>
-            {hash}
-          </ExternalLink>
-          <Copy toCopy={hash} />
-        </Box>
-      </StyledBetween>
-      <StyledBetween>
-        <span>Transaction Fee</span>
-        <Box display={'flex'} gap="5">
-          <span>
-            {info?.fee?.toSignificant(18)} {info?.nativeSymbol}
-          </span>
-        </Box>
-      </StyledBetween>
-      <StyledBetween>
-        <span>Height</span>
-        <span>{info?.height}</span>
-      </StyledBetween>
-      <StyledBetween>
-        <span>Nonce</span>
-        <span>{info?.nonce}</span>
-      </StyledBetween>
       <Box
         width={'100%'}
         sx={{
           overflow: 'auto'
         }}
       >
-        <Box>Event message </Box>
         <Box
           sx={{
             background: '#F3F3F3',
@@ -165,7 +214,7 @@ function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId;
             // whiteSpace: 'pre-wrap'
           }}
         >
-          <ReactJson src={JSON.parse(eventMsg)} />
+          <ReactJson src={showJson} />
         </Box>
       </Box>
     </Box>

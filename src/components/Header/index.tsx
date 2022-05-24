@@ -25,6 +25,7 @@ import { useActiveWeb3React } from 'hooks'
 import NetworkSelect from './NetworkSelect'
 import eventMenuIcon from 'assets/images/event_type_icon.png'
 import mepMenuIcon from 'assets/images/mep_icon.png'
+import dappMenuIcon from 'assets/images/dapp_icon.svg'
 
 interface TabContent {
   title: string
@@ -40,7 +41,8 @@ interface Tab extends TabContent {
 
 export const Tabs: Tab[] = [
   { title: 'Events Type', route: routes.eventType, icon: <Image src={eventMenuIcon} width="24px" /> },
-  { title: 'MEP', route: routes.mep, icon: <Image src={mepMenuIcon} width="24px" /> }
+  { title: 'MEP', route: routes.mep, icon: <Image src={mepMenuIcon} width="24px" /> },
+  { title: 'DAPP', route: routes.dapp, icon: <Image src={dappMenuIcon} width="24px" /> }
 ]
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({

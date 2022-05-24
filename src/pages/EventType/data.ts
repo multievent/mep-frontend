@@ -1,7 +1,7 @@
 export enum EVENT_TYPES {
-  MAKE_ORDER = 'Make Order',
-  TAKEN_ORDER = 'Take Order',
-  WITHDRAW_ALL = 'Withdraw all'
+  MAKE_ORDER = 'Make_Order',
+  TAKEN_ORDER = 'Take_Order',
+  WITHDRAW_ALL = 'Withdraw_All'
 }
 
 export interface EventProp {
