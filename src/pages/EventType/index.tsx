@@ -83,9 +83,9 @@ function EventCard({ item }: { item: EventProp }) {
           padding: '10px'
         }}
       >
-        <Typography mb={6} fontSize={14} fontWeight={500}>
+        {/* <Typography mb={6} fontSize={14} fontWeight={500}>
           event detail:
-        </Typography>
+        </Typography> */}
         <Box
           sx={{
             fontSize: 14,

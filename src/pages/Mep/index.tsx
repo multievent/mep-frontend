@@ -25,7 +25,7 @@ import Spinner from 'components/Spinner'
 //   }
 // })
 
-export const MarketTableHeader = ['Events Type', 'Contract address', 'Sender', 'Time', '']
+export const MarketTableHeader = ['Events Type', 'Contract address', 'Sender', 'Signature', 'Time', '']
 
 export interface MEPListProp {
   timeStamp: number
@@ -46,7 +46,7 @@ export default function Index() {
     setTimeout(() => setTimeIndex(timeIndex + 1), 1000)
     return dataList.map(item => [
       ChainListMap[item.chainId].symbol + '_' + item.eventType,
-      <Box key={1} display="flex" gap={2}>
+      <Box key={1} display="flex" gap={2} alignItems={'center'}>
         {shortenAddress(item.contractAddress)}
         <Copy toCopy={item.contractAddress} />
       </Box>,
@@ -58,14 +58,20 @@ export default function Index() {
         {/* {shortenAddress(item.sender)}
         <Copy toCopy={item.sender} /> */}
       </Box>,
+      <Tooltip key={0} title={item.signature} arrow placement="top">
+        <Box key={0} display="flex" alignItems={'center'}>
+          {shortenAddress(item.signature)}
+          <Copy toCopy={item.signature} />
+        </Box>
+      </Tooltip>,
       <ShowTime key={0} showTime timeIndex={timeIndex} timeStamp={item.timeStamp} />
     ])
   }, [dataList, timeIndex])
 
   const TxDetailRows = useMemo(
     () =>
-      dataList.map(({ hash, signature, chainId, eventMsg }) => (
-        <TxDetail signature={signature} eventMsg={eventMsg} chainId={chainId} key={hash} hash={hash} />
+      dataList.map(({ hash, chainId, eventMsg }) => (
+        <TxDetail eventMsg={eventMsg} chainId={chainId} key={hash} hash={hash} />
       )),
     [dataList]
   )
@@ -175,17 +181,7 @@ export default function Index() {
 //   )
 // }
 
-function TxDetail({
-  hash,
-  chainId,
-  eventMsg,
-  signature
-}: {
-  signature: string
-  hash: string
-  chainId: ChainId
-  eventMsg: string
-}) {
+function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId; eventMsg: string }) {
   const info = useTxInfo(chainId, hash)
 
   const showJson = useMemo(() => {
@@ -195,10 +191,9 @@ function TxDetail({
       fee: info.fee?.toSignificant(18) || undefined,
       height: info.height || undefined,
       nonce: info.nonce || undefined,
-      signature: signature,
       eventMessage: JSON.parse(eventMsg)
     }
-  }, [chainId, eventMsg, hash, info, signature])
+  }, [chainId, eventMsg, hash, info])
 
   return (
     <Box
