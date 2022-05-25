@@ -35,6 +35,7 @@ export interface MEPListProp {
   hash: string
   sender: string
   eventMsg: string
+  signature: string
 }
 
 export default function Index() {
@@ -63,8 +64,8 @@ export default function Index() {
 
   const TxDetailRows = useMemo(
     () =>
-      dataList.map(({ hash, chainId, eventMsg }) => (
-        <TxDetail eventMsg={eventMsg} chainId={chainId} key={hash} hash={hash} />
+      dataList.map(({ hash, signature, chainId, eventMsg }) => (
+        <TxDetail signature={signature} eventMsg={eventMsg} chainId={chainId} key={hash} hash={hash} />
       )),
     [dataList]
   )
@@ -174,7 +175,17 @@ export default function Index() {
 //   )
 // }
 
-function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId; eventMsg: string }) {
+function TxDetail({
+  hash,
+  chainId,
+  eventMsg,
+  signature
+}: {
+  signature: string
+  hash: string
+  chainId: ChainId
+  eventMsg: string
+}) {
   const info = useTxInfo(chainId, hash)
 
   const showJson = useMemo(() => {
@@ -184,9 +195,10 @@ function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId;
       fee: info.fee?.toSignificant(18) || undefined,
       height: info.height || undefined,
       nonce: info.nonce || undefined,
+      signature: signature,
       eventMessage: JSON.parse(eventMsg)
     }
-  }, [chainId, eventMsg, hash, info.fee, info.height, info.nonce])
+  }, [chainId, eventMsg, hash, info, signature])
 
   return (
     <Box

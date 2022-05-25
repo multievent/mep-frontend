@@ -44,6 +44,7 @@ export function useEventList() {
           contractAddress: item.ContractAddr,
           hash: item.TxHash,
           sender: item.Sender,
+          signature: item.Signature,
           eventMsg: item.Details
         }))
         setList(_ret)

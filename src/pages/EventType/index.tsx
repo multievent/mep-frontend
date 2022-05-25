@@ -118,6 +118,10 @@ function EventCard({ item }: { item: EventProp }) {
             <span>int</span>
           </>
           <>
+            <span>signature: </span>
+            <span>string</span>
+          </>
+          <>
             <span>eventMessage: </span>
             <span>json</span>
           </>
