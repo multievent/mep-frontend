@@ -5,7 +5,7 @@ import makeIcon from 'assets/svg/make_order.svg'
 import takeIcon from 'assets/svg/take_order.svg'
 import withdrawIcon from 'assets/svg/withdraw_all.svg'
 import { useMemo, useState } from 'react'
-import { ChainId, ChainList, SUPPORTED_NETWORKS } from 'constants/chain'
+import { ChainId, ChainList, ChainListMap, SUPPORTED_NETWORKS } from 'constants/chain'
 import ChainLogo from 'components/ChainLogo'
 import RoundTabs from 'components/Tabs/RoundTabs'
 import { eventList, EventProp, EVENT_TYPES } from './data'
@@ -67,7 +67,7 @@ function EventCard({ item }: { item: EventProp }) {
                 ? takeIcon
                 : withdrawIcon
             }
-            text={item.type}
+            text={ChainListMap[item.chainId].symbol + '_' + item.type}
             size="24px"
             fontSize={18}
             fontWeight={500}
