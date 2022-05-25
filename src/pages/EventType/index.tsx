@@ -101,27 +101,27 @@ function EventCard({ item }: { item: EventProp }) {
           }}
         >
           <>
-            <span>Transaction Hash: </span>
+            <span>chainId: </span>
+            <span>int</span>
+          </>
+          <>
+            <span>hash: </span>
             <span>string</span>
           </>
           <>
-            <span>Address: </span>
-            <span>ether address</span>
+            <span>fee: </span>
+            <span>string</span>
           </>
           <>
-            <span>Height: </span>
-            <span>number</span>
+            <span>height: </span>
+            <span>int</span>
           </>
           <>
-            <span>Transaction Fee: </span>
-            <span>{symbol}</span>
+            <span>nonce: </span>
+            <span>int</span>
           </>
           <>
-            <span>Nonce: </span>
-            <span>number</span>
-          </>
-          <>
-            <span>Event message: </span>
+            <span>eventMessage: </span>
             <span>json</span>
           </>
         </Box>
