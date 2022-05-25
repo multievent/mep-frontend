@@ -240,8 +240,8 @@ function ShowTime({ timeStamp, showTime, timeIndex }: { timeStamp: number; showT
 
   if (showTime) {
     return (
-      <Tooltip title={new Date(timeStamp * 1000).toUTCString()} arrow placement="top">
-        <Box>{str}</Box>
+      <Tooltip title={new Date(timeStamp * 1000).toLocaleString()} arrow placement="top">
+        <span>{str}</span>
       </Tooltip>
     )
   }

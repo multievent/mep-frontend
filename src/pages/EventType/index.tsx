@@ -5,7 +5,7 @@ import makeIcon from 'assets/svg/make_order.svg'
 import takeIcon from 'assets/svg/take_order.svg'
 import withdrawIcon from 'assets/svg/withdraw_all.svg'
 import { useMemo, useState } from 'react'
-import { ChainId, ChainList, ChainListMap, SUPPORTED_NETWORKS } from 'constants/chain'
+import { ChainList, ChainListMap } from 'constants/chain'
 import ChainLogo from 'components/ChainLogo'
 import RoundTabs from 'components/Tabs/RoundTabs'
 import { eventList, EventProp, EVENT_TYPES } from './data'
@@ -44,10 +44,7 @@ export default function Index() {
 
 function EventCard({ item }: { item: EventProp }) {
   const theme = useTheme()
-  const symbol = useMemo(() => {
-    const chain = SUPPORTED_NETWORKS[item.chainId as ChainId]
-    return chain?.nativeCurrency.symbol || ''
-  }, [item.chainId])
+
   return (
     <Box
       padding="20px 30px 30px"
