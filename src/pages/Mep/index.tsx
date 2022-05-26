@@ -232,8 +232,11 @@ function ShowTime({ timeStamp, showTime, timeIndex }: { timeStamp: number; showT
   const str = useMemo(() => {
     const now = Math.ceil(new Date().getTime() / 1000)
     const gap = now - timeStamp
+    if (gap < 0) {
+      return '0 secs ago'
+    }
     if (gap < 60) {
-      return `${now} secs ago`
+      return `${gap} secs ago`
     }
     if (gap < 3600) {
       return `${Number(gap / 60).toFixed()} mins ago`
