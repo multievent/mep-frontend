@@ -72,6 +72,21 @@ declare module '@mui/material/styles/createTheme' {
 }
 
 export const theme = {
+  typography: {
+    fontFamily: [
+      'Lexend Deca',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(',')
+  },
   palette: {
     primary: {
       light: 'rgba(22, 22, 22, 0.5)',
@@ -98,11 +113,11 @@ export const theme = {
       main: '#3AC261'
     },
     background: {
-      default: '#FFFFFF',
-      paper: '#F3F3F3'
+      default: '#F2F3FB',
+      paper: '#F8F9FF'
     },
     text: {
-      primary: '#161616',
+      primary: '#212121',
       secondary: '#16161640',
       disabled: '#999999'
     },
@@ -117,16 +132,16 @@ export const theme = {
     }
   },
   textColor: {
-    text1: '#FFFFFF',
-    text2: '#CCCCCC',
-    text3: '#999999',
+    text1: '#848484',
+    text2: '#474E66',
+    text3: '#B3BACC',
     text4: '#727272',
     text5: '#333333'
   },
   bgColor: {
     bg1: '#000000',
-    bg2: '#F7F7F8',
-    bg3: '#252525',
+    bg2: '#F8EC4E',
+    bg3: '#9867FF',
     bg4: '#303030',
     bg5: '#A1A1A1'
   },
@@ -134,12 +149,12 @@ export const theme = {
     gradient1: '#000000 linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%)'
   },
   height: {
-    header: '80px',
+    header: '88px',
     mobileHeader: '77px',
     footer: '60px'
   },
   width: {
-    drawer: '272px'
+    drawer: '270px'
   },
   shape: {
     border: '1px solid',
@@ -153,12 +168,12 @@ export const override: any = {
     styleOverrides: {
       body: { backgroundColor: theme.palette.background.default, fontSize: 16 },
       'html, input, textarea, button': {
-        fontFamily: 'HelveticaNeueCyr',
+        fontFamily: 'Lexend Deca',
         fontDisplay: 'fallback'
       },
       '@supports (font-variation-settings: normal)': {
         'html, input, textarea, button ': {
-          fontFamily: 'HelveticaNeueCyr',
+          fontFamily: 'Lexend Deca',
           fontDisplay: 'fallback'
         }
       }
@@ -247,7 +262,7 @@ export const override: any = {
   MuiTypography: {
     styleOverrides: {
       root: {
-        fontFamily: 'HelveticaNeueCyr'
+        fontFamily: 'Lexend Deca'
       },
       body1: {
         fontSize: 14

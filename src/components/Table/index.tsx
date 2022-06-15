@@ -5,7 +5,6 @@ import {
   TableRow,
   TableBody,
   Box,
-  Typography,
   styled,
   IconButton,
   Collapse,
@@ -97,13 +96,13 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
   fontSize?: string
 }>(({ variant, theme, fontSize }) => ({
   height: 80,
-  borderRadius: '16px',
+  borderRadius: '8px',
   overflow: 'hidden',
   position: 'relative',
   whiteSpace: 'pre',
-  background: variant === 'outlined' ? 'transparent' : theme.palette.background.default,
+  background: variant === 'outlined' ? 'transparent' : theme.palette.common.white,
   '& + tr .MuiCollapse-root': {
-    background: variant === 'outlined' ? 'transparent' : theme.palette.background.default
+    background: variant === 'outlined' ? 'transparent' : theme.palette.common.white
   },
   '& .MuiTableCell-root': {
     fontSize: fontSize ?? 'inherit',
@@ -120,34 +119,33 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
       borderLeft: '1px solid',
       borderColor: variant === 'outlined' ? '#00000010' : 'transparent',
       paddingLeft: '20px',
-      borderTopLeftRadius: 16,
-      borderBottomLeftRadius: 16
+      borderTopLeftRadius: '8px',
+      borderBottomLeftRadius: '8px'
     },
     '&:last-child': {
       borderRight: '1px solid',
       borderColor: variant === 'outlined' ? '#00000010' : 'transparent',
       paddingRight: '20px',
-      borderTopRightRadius: 16,
-      borderBottomRightRadius: 16
+      borderTopRightRadius: '8px',
+      borderBottomRightRadius: '8px'
     }
-  },
-  '&:hover': {
-    '& + tr .MuiCollapse-root': {
-      backgroundColor: variant === 'outlined' ? '#E2E7F020' : '#E2E7F0'
-    },
-    backgroundColor: variant === 'outlined' ? '#E2E7F020' : '#E2E7F0'
   }
+  // '&:hover': {
+  //   '& + tr .MuiCollapse-root': {
+  //     backgroundColor: variant === 'outlined' ? '#E2E7F020' : '#E2E7F0'
+  //   },
+  //   backgroundColor: variant === 'outlined' ? '#E2E7F020' : '#E2E7F0'
+  // }
 }))
 
-const Card = styled('div')({
-  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-  border: '1px solid rgba(0, 0, 0, 0.1)',
-  borderRadius: 16,
-  padding: 16,
-  '& > div': {
-    width: '100%'
+const Card = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.common.white,
+  borderRadius: '8px',
+  padding: '16px 24px',
+  [theme.breakpoints.down('md')]: {
+    padding: '10px'
   }
-})
+}))
 
 const sortIcon = ({ className }: { className: string }) => (
   <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -164,21 +162,6 @@ const sortIcon = ({ className }: { className: string }) => (
   </svg>
 )
 
-const CardRow = styled('div')(`
-  display: flex;
-  justify-content: space-between;
-  grid-template-columns: auto 100%;
-  > div:first-of-type {
-    white-space: nowrap;
-  }
-  > div:last-child {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-`)
-
 export default function Table({
   header,
   rows,
@@ -189,7 +172,9 @@ export default function Table({
   sortHeaders,
   order,
   orderBy,
-  createSortfunction
+  createSortfunction,
+  noHeader,
+  showCard
 }: {
   sortHeaders?: string[]
   header: string[]
@@ -200,6 +185,8 @@ export default function Table({
   fontSize?: string
   order?: 'asc' | 'desc'
   orderBy?: string
+  noHeader?: boolean
+  showCard?: boolean
   createSortfunction?: (label: string) => () => void
 }) {
   const matches = useBreakpoint('md')
@@ -210,80 +197,69 @@ export default function Table({
         <>
           {rows.map((data, index) => (
             <Card key={index} sx={{ mb: 10 }}>
-              <Box display="flex" flexDirection="column" gap="5px">
-                {header.map((headerString, idx) => (
-                  <>
-                    <CardRow key={idx}>
-                      <Typography variant="inherit" component="div" fontSize={12} color="#000000" sx={{ opacity: 0.5 }}>
-                        {headerString}
-                      </Typography>
-                      <Typography sx={{ color: theme => theme.palette.text.secondary }} component="div">
-                        {data[idx] ?? null}
-                      </Typography>
-                    </CardRow>
-                    <CardRow>
-                      {collapsible && idx + 1 === header.length && (
-                        <MobileCardCollapsible
-                          collapsible={collapsible}
-                          hiddenPart={hiddenParts && hiddenParts[index]}
-                        />
-                      )}
-                    </CardRow>
-                  </>
-                ))}
-              </Box>
+              <CardPanel data={data} collapsible={collapsible && hiddenParts ? hiddenParts[index] : undefined} />
             </Card>
           ))}
         </>
+      ) : showCard ? (
+        <Box display={'grid'} gridTemplateColumns="1fr 1fr" gap={24}>
+          {rows.map((data, index) => (
+            <Card key={index} sx={{ mb: 10 }}>
+              <CardPanel data={data} collapsible={collapsible && hiddenParts ? hiddenParts[index] : undefined} />
+            </Card>
+          ))}
+        </Box>
       ) : (
         <StyledTableContainer>
           <table>
-            <StyledTableHead>
-              <TableRow>
-                {header.map((string, idx) => (
-                  <TableCell key={idx}>
-                    {sortHeaders && sortHeaders.includes(string) && order && orderBy && createSortfunction ? (
-                      <TableSortLabel
-                        active={orderBy === string}
-                        direction={orderBy === string ? order : 'asc'}
-                        onClick={createSortfunction(string)}
-                        IconComponent={sortIcon}
-                        sx={{
-                          '& .MuiTableSortLabel-icon': {
-                            transform: 'none',
-                            opacity: 1
-                          },
-                          '& .MuiTableSortLabel-iconDirectionDesc .sort-down': {
-                            fill: theme =>
-                              orderBy === string
-                                ? order === 'desc'
-                                  ? theme.palette.primary.main
+            {!noHeader && (
+              <StyledTableHead>
+                <TableRow>
+                  {header.map((string, idx) => (
+                    <TableCell key={idx}>
+                      {sortHeaders && sortHeaders.includes(string) && order && orderBy && createSortfunction ? (
+                        <TableSortLabel
+                          active={orderBy === string}
+                          direction={orderBy === string ? order : 'asc'}
+                          onClick={createSortfunction(string)}
+                          IconComponent={sortIcon}
+                          sx={{
+                            '& .MuiTableSortLabel-icon': {
+                              transform: 'none',
+                              opacity: 1
+                            },
+                            '& .MuiTableSortLabel-iconDirectionDesc .sort-down': {
+                              fill: theme =>
+                                orderBy === string
+                                  ? order === 'desc'
+                                    ? theme.palette.primary.main
+                                    : '#00000099'
                                   : '#00000099'
-                                : '#00000099'
-                          },
-                          '& .MuiTableSortLabel-iconDirectionAsc .sort-up': {
-                            fill: theme =>
-                              orderBy === string
-                                ? order === 'asc'
-                                  ? theme.palette.primary.main
+                            },
+                            '& .MuiTableSortLabel-iconDirectionAsc .sort-up': {
+                              fill: theme =>
+                                orderBy === string
+                                  ? order === 'asc'
+                                    ? theme.palette.primary.main
+                                    : '#00000099'
                                   : '#00000099'
-                                : '#00000099'
-                          }
-                        }}
-                      >
-                        {string}
+                            }
+                          }}
+                        >
+                          {string}
 
-                        {/* <Box component="span" sx={visuallyHidden}>
+                          {/* <Box component="span" sx={visuallyHidden}>
                           {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                         </Box> */}
-                      </TableSortLabel>
-                    ) : (
-                      string
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </StyledTableHead>
+                        </TableSortLabel>
+                      ) : (
+                        string
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </StyledTableHead>
+            )}
             <TableBody>
               {rows.map((row, idx) => (
                 <Row
@@ -341,7 +317,7 @@ function Row({
         ))}
         {collapsible && (
           <TableCell>
-            Detail
+            <span style={{ color: '#69718C' }}>Detail</span>
             <IconButton
               aria-label="expand row"
               size="small"
@@ -361,18 +337,17 @@ function Row({
               timeout="auto"
               unmountOnExit
               sx={{
-                borderBottomRightRadius: 16,
-                borderBottomLeftRadius: 16,
+                borderRadius: '0 0 8px 8px',
                 width: '100%',
                 marginTop: -8
               }}
             >
               <Box
                 sx={{
-                  padding: 15,
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
+                  padding: '0 15px 15px',
+                  // border: '1px solid rgba(0, 0, 0, 0.1)',
                   borderTop: 'none',
-                  borderRadius: '0 0 16px 16px',
+                  borderRadius: '0 0 8px 8px',
                   transition: '.5s',
                   display: 'flex',
                   alignItems: 'center',
@@ -389,45 +364,66 @@ function Row({
   )
 }
 
-function MobileCardCollapsible({ collapsible, hiddenPart }: { collapsible?: boolean; hiddenPart?: JSX.Element }) {
-  const [isOpen, setIsOpen] = useState(false)
+// function MobileCardCollapsible({ collapsible, hiddenPart }: { collapsible?: boolean; hiddenPart?: JSX.Element }) {
+//   const [isOpen, setIsOpen] = useState(false)
 
-  return collapsible ? (
-    <Box
-      sx={{
-        display: 'grid !important'
-      }}
-    >
-      <Collapse
-        in={isOpen}
-        timeout="auto"
-        unmountOnExit
+//   return collapsible ? (
+//     <Box
+//       sx={{
+//         display: 'grid !important'
+//       }}
+//     >
+//       <Collapse
+//         in={isOpen}
+//         timeout="auto"
+//         unmountOnExit
+//         sx={{
+//           borderRadius: '8px',
+//           width: '100%',
+//           overflow: 'auto',
+//           marginTop: -8
+//         }}
+//       >
+//         <Box
+//           sx={{
+//             // padding: 10,
+//             borderRadius: '8px',
+//             transition: '.5s',
+//             display: 'flex',
+//             alignItems: 'center',
+//             justifyContent: 'space-between'
+//           }}
+//         >
+//           {hiddenPart}
+//         </Box>
+//       </Collapse>
+
+//       <IconButton aria-label="expand row" size="small" onClick={() => setIsOpen(open => !open)} sx={{ flexGrow: 0 }}>
+//         {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+//       </IconButton>
+//     </Box>
+//   ) : null
+// }
+
+function CardPanel({ data, collapsible }: { data: (string | number | JSX.Element)[]; collapsible?: JSX.Element }) {
+  return (
+    <Box display="flex" flexDirection="column" gap="10px">
+      <Box
         sx={{
-          borderBottomRightRadius: 16,
-          borderBottomLeftRadius: 16,
-          width: '100%',
-          overflow: 'auto',
-          marginTop: -8
+          '& p': {
+            fontSize: 12
+          },
+          '& span': {
+            fontSize: 14
+          },
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr'
         }}
+        gap="16px"
       >
-        <Box
-          sx={{
-            padding: 10,
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            borderRadius: '16px',
-            transition: '.5s',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
-          {hiddenPart}
-        </Box>
-      </Collapse>
-
-      <IconButton aria-label="expand row" size="small" onClick={() => setIsOpen(open => !open)} sx={{ flexGrow: 0 }}>
-        {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-      </IconButton>
+        {data.map(v => v)}
+      </Box>
+      <Box>{collapsible}</Box>
     </Box>
-  ) : null
+  )
 }

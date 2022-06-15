@@ -1,6 +1,4 @@
-import { Box, Link, Tooltip } from '@mui/material'
-import LogoText from 'components/LogoText'
-import mepMenuIcon from 'assets/images/mep_icon.svg'
+import { Box, Link, styled, Tooltip, Typography, useTheme } from '@mui/material'
 import Table from 'components/Table'
 import Pagination from 'components/Pagination'
 import { EVENT_TYPES } from 'pages/EventType/data'
@@ -13,17 +11,38 @@ import { ChainId, ChainListMap } from 'constants/chain'
 import { useEventList } from 'hooks/useFetch'
 import ReactJson from 'react-json-view'
 import Spinner from 'components/Spinner'
+import { ReactComponent as ToggleCard } from 'assets/svg/toggle_card.svg'
+import { ReactComponent as ToggleList } from 'assets/svg/toggle_list.svg'
+import { HideOnMobile } from 'theme'
 
-// const StyledBetween = styled(Box)({
-//   display: 'flex',
-//   alignItems: 'center',
-//   justifyContent: 'space-between',
-//   flexWrap: 'wrap',
-//   '& *': {
-//     wordBreak: 'break-all',
-//     whiteSpace: 'initial'
-//   }
-// })
+const StyledBetween = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  '& *': {
+    wordBreak: 'break-all',
+    whiteSpace: 'initial'
+  }
+})
+
+const StyledToggle = styled(Box)(({ theme }) => ({
+  border: '1px solid #E3E6FB',
+  borderRadius: '4px',
+  height: 24,
+  width: 65,
+  backgroundColor: theme.palette.common.white,
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  alignContent: 'center',
+  justifyItems: 'center',
+  cursor: 'pointer',
+  '& .current': {
+    '& path, & rect': {
+      fill: '#212121'
+    }
+  }
+}))
 
 export const MarketTableHeader = ['Events Type', 'Contract address', 'Sender', 'Signature', 'Time', '']
 
@@ -38,33 +57,54 @@ export interface MEPListProp {
   signature: string
 }
 
+enum Mode {
+  TABLE,
+  CARD
+}
+
 export default function Index() {
   const { list: dataList, page, firstLoading } = useEventList()
   const [timeIndex, setTimeIndex] = useState(0)
+  const [showMode, setShowMode] = useState<Mode>(Mode.TABLE)
 
   const rows = useMemo(() => {
     setTimeout(() => setTimeIndex(timeIndex + 1), 1000)
     return dataList.map(item => [
-      ChainListMap[item.chainId].symbol + '_' + item.eventType,
-      <Box key={1} display="flex" gap={2} alignItems={'center'}>
-        {shortenAddress(item.contractAddress)}
-        <Copy toCopy={item.contractAddress} />
+      <Box key={0}>
+        <Typography color="#B3BACC">Events Type</Typography>
+        <span>{ChainListMap[item.chainId].symbol + '_' + item.eventType}</span>
+      </Box>,
+      <Box key={0}>
+        <Typography color="#B3BACC">Contract address</Typography>
+        <Box key={1} display="flex" gap={2} alignItems={'center'}>
+          {shortenAddress(item.contractAddress)}
+          <Copy margin="0 0 0 5px" toCopy={item.contractAddress} />
+        </Box>
       </Box>,
       // <ChainLogo key={0} gapSize="6px" chainId={item.chainId} size="14px" fontSize="14" fontWeight={500} />,
-      <Box key={1} display="flex" gap={2}>
-        <Link target={'_blank'} color="#13B5EC" underline="hover" href={'https://demo.matchprotocol.xyz/'}>
-          MatchProtocol
-        </Link>
-        {/* {shortenAddress(item.sender)}
+      <Box key={0}>
+        <Typography color="#B3BACC">Sender</Typography>
+        <Box key={1} display="flex" gap={2}>
+          <Link target={'_blank'} color="#9867FF" underline="hover" href={'https://demo.matchprotocol.xyz/'}>
+            MatchProtocol
+          </Link>
+          {/* {shortenAddress(item.sender)}
         <Copy toCopy={item.sender} /> */}
-      </Box>,
-      <Tooltip key={0} title={item.signature} arrow placement="top">
-        <Box key={0} display="flex" alignItems={'center'}>
-          {shortenAddress(item.signature)}
-          <Copy toCopy={item.signature} />
         </Box>
-      </Tooltip>,
-      <ShowTime key={0} showTime timeIndex={timeIndex} timeStamp={item.timeStamp} />
+      </Box>,
+      <Box key={0}>
+        <Typography color="#B3BACC">Signature</Typography>
+        <Tooltip key={0} title={item.signature} arrow placement="top">
+          <Box key={0} display="flex" alignItems={'center'}>
+            {shortenAddress(item.signature)}
+            <Copy margin="0 0 0 5px" toCopy={item.signature} />
+          </Box>
+        </Tooltip>
+      </Box>,
+      <Box key={0}>
+        <Typography color="#B3BACC">Time</Typography>
+        <ShowTime key={0} showTime timeIndex={timeIndex} timeStamp={item.timeStamp} />
+      </Box>
     ])
   }, [dataList, timeIndex])
 
@@ -77,28 +117,54 @@ export default function Index() {
   )
 
   return (
-    <Box maxWidth="1020px" padding={'30px 20px'} width="100%">
-      <Box width="100%" display="flex" justifyContent="space-between" mb={25}>
-        <LogoText logo={mepMenuIcon} text="MEP" size="32px" fontSize={36} fontWeight={700} />
+    <Box maxWidth="1440px" padding={'10px 20px 20px'} width="100%">
+      <Box width="100%" display="flex" justifyContent="space-between" mb={20}>
+        <Typography fontSize={24} fontWeight={600}>
+          MEP
+        </Typography>
       </Box>
 
-      <Box
-        sx={{
-          background: '#fff',
-          borderRadius: '20px',
-          padding: '20px'
-        }}
-      >
+      <Box position={'relative'} minHeight="50px">
+        <StyledBetween mt={14} mb={14}>
+          <Typography fontWeight={500} fontSize={16}>
+            Events
+          </Typography>
+          <HideOnMobile>
+            <StyledToggle>
+              <ToggleCard
+                className={showMode === Mode.CARD ? 'current' : undefined}
+                onClick={() => setShowMode(Mode.CARD)}
+              />
+              <ToggleList
+                className={showMode === Mode.TABLE ? 'current' : undefined}
+                onClick={() => setShowMode(Mode.TABLE)}
+              />
+            </StyledToggle>
+          </HideOnMobile>
+        </StyledBetween>
         <Table
           fontSize="14px"
+          showCard={showMode === Mode.CARD}
+          noHeader
           header={MarketTableHeader}
           collapsible
           hiddenParts={TxDetailRows}
           rows={rows}
-          variant="outlined"
         />
         {firstLoading && (
-          <Box display="flex" pt={20} pb={20} justifyContent="center">
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              backgroundColor: 'rgba(255,255,255,0.5)',
+              width: '100%',
+              height: '100%'
+            }}
+            display="flex"
+            justifyContent="center"
+            alignItems={'center'}
+          >
             <Spinner size="40px" />
           </Box>
         )}
@@ -183,6 +249,7 @@ export default function Index() {
 
 function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId; eventMsg: string }) {
   const info = useTxInfo(chainId, hash)
+  const theme = useTheme()
 
   const showJson = useMemo(() => {
     return {
@@ -213,9 +280,8 @@ function TxDetail({ hash, chainId, eventMsg }: { hash: string; chainId: ChainId;
       >
         <Box
           sx={{
-            background: '#F3F3F3',
+            background: theme.palette.background.paper,
             padding: '10px',
-            borderRadius: '8px',
             maxWidth: '100%',
             overflow: 'auto'
             // whiteSpace: 'pre-wrap'

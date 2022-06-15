@@ -7,18 +7,20 @@ import useCopyClipboard from 'hooks/useCopyClipboard'
 interface Props {
   toCopy: string
   children?: React.ReactNode
+  margin?: string
 }
 
 export default function Copy(props: Props) {
   const [isCopied, setCopied] = useCopyClipboard()
-  const { toCopy, children } = props
+  const { toCopy, children, margin } = props
 
   return (
     <Box
       sx={{
         display: 'inline-flex',
         cursor: 'pointer',
-        height: 17,
+        height: 15,
+        margin,
         '& svg': {
           width: 14
           // mr: '10px'

@@ -1,12 +1,16 @@
 import { styled, Pagination, Typography, Box } from '@mui/material'
 
 export const StyledPagination = styled(Pagination)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  '& .MuiPaginationItem-root': { opacity: 0.5 },
+  // color: theme.palette.text.secondary,
+  color: theme.palette.text.primary,
+  fontWeight: 500,
+  // '& .MuiPaginationItem-root': { opacity: 0.5 },
+  '& .MuiPaginationItem-page': {
+    backgroundColor: '#E3E6FB'
+  },
   '& .MuiPaginationItem-page.Mui-selected': {
-    backgroundColor: 'transparent',
+    backgroundColor: theme.bgColor.bg2,
     opacity: 1,
-    color: theme.palette.text.primary,
     borderColor: theme.palette.text.primary
   }
 }))
@@ -40,7 +44,7 @@ export default function PaginationView({
             display: 'flex',
             justifyContent: 'flex-end',
             alignItems: 'center',
-            gap: { xs: 20, sm: 26 },
+            gap: { xs: 5, sm: 8 },
             flexDirection: { xs: 'column', sm: 'row' },
             marginBottom: 15
           }}
@@ -51,11 +55,7 @@ export default function PaginationView({
                 width: { xs: '100%', sm: 'fit-content' }
               }}
             >
-              <Typography
-                sx={{
-                  opacity: 0.4
-                }}
-              >
+              <Typography color="#B3B9CB">
                 {(page - 1) * perPage + 1} - {total && page * perPage > total ? total : page * perPage} items of {total}
               </Typography>
             </Box>
@@ -65,7 +65,7 @@ export default function PaginationView({
             page={page}
             siblingCount={siblingCount || 1}
             boundaryCount={boundaryCount || 1}
-            variant="outlined"
+            // variant="outlined"
             shape="rounded"
             onChange={onChange}
           />

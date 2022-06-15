@@ -48,7 +48,7 @@ const BodyWrapper = styled('div')(({ theme }) => ({
   //   minHeight: `calc(100vh - ${theme.height.header} - ${theme.height.mobileHeader})`,
   //   paddingTop: 20
   // },
-  background: theme.palette.background.paper,
+  background: theme.palette.background.default,
   paddingLeft: theme.width.drawer,
   paddingTop: theme.height.header,
   [theme.breakpoints.down('md')]: {

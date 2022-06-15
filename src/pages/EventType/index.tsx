@@ -1,6 +1,5 @@
 import { Box, Typography, useTheme } from '@mui/material'
 import LogoText from 'components/LogoText'
-import eventMenuIcon from 'assets/images/event_type_icon.svg'
 import makeIcon from 'assets/svg/make_order.svg'
 import takeIcon from 'assets/svg/take_order.svg'
 import withdrawIcon from 'assets/svg/withdraw_all.svg'
@@ -9,11 +8,13 @@ import { ChainList, ChainListMap } from 'constants/chain'
 import ChainLogo from 'components/ChainLogo'
 import RoundTabs from 'components/Tabs/RoundTabs'
 import { eventList, EventProp, EVENT_TYPES } from './data'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export default function Index() {
+  const theme = useTheme()
   const [chainTab, setChainTab] = useState(0)
   const walletInfoTabs = useMemo(() => {
-    return ChainList.map(item => <ChainLogo key={item.id} gapSize="6px" chainId={item.id} size="16px" />)
+    return ChainList.map(item => <ChainLogo key={item.id} gapSize="8px" chainId={item.id} size="14px" />)
   }, [])
 
   const currentData = useMemo(() => {
@@ -22,18 +23,20 @@ export default function Index() {
   }, [chainTab])
 
   return (
-    <Box maxWidth="1020px" padding={'30px 20px'} width="100%">
-      <Box width="100%" display="flex" justifyContent="space-between" mb={25}>
-        <LogoText logo={eventMenuIcon} text="Events Type" size="32px" fontSize={36} fontWeight={700} />
+    <Box maxWidth="1440px" padding={'10px 20px 20px'} width="100%">
+      <Box width="100%" display="flex" justifyContent="space-between" mb={20}>
+        <Typography fontSize={24} fontWeight={600}>
+          Events Type
+        </Typography>
       </Box>
-      <Box display={'flex'} flexWrap="wrap" justifyContent="space-between" alignItems={'center'} mb={25}>
+      <Box display={'flex'} flexWrap="wrap" justifyContent="space-between" alignItems={'center'} mb={16}>
         <RoundTabs titles={walletInfoTabs} current={chainTab} onChange={setChainTab} />
 
-        <Typography fontWeight={700} fontSize={16} textAlign="right">
+        <Typography fontWeight={400} fontSize={13} color={theme.textColor.text2} textAlign="right">
           Supported blockchain
         </Typography>
       </Box>
-      <Box display={'grid'} gridTemplateColumns={{ sm: '1fr 1fr', xs: '1fr' }} gap={'20px 30px'}>
+      <Box display={'grid'} gridTemplateColumns={{ sm: '1fr 1fr', xs: '1fr' }} gap={'12px'}>
         {currentData.map((item, index) => (
           <EventCard key={index} item={item} />
         ))}
@@ -44,13 +47,14 @@ export default function Index() {
 
 function EventCard({ item }: { item: EventProp }) {
   const theme = useTheme()
+  const isXs = useBreakpoint('sm')
 
   return (
     <Box
-      padding="20px 30px 30px"
+      padding={{ sm: '20px 24px 24px', xs: '16px' }}
       sx={{
         background: '#fff',
-        borderRadius: '20px',
+        borderRadius: '12px',
         maxWidth: '100%'
       }}
     >
@@ -65,22 +69,28 @@ function EventCard({ item }: { item: EventProp }) {
                 : withdrawIcon
             }
             text={ChainListMap[item.chainId].symbol + '_' + item.type}
-            size="24px"
-            fontSize={18}
-            fontWeight={500}
+            size={isXs ? '14px' : '18px'}
+            fontSize={isXs ? 14 : 18}
+            fontWeight={700}
           />
         </Box>
         <Box>
-          <ChainLogo gapSize="6px" chainId={item.chainId} size="13px" fontWeight={500} />
+          <ChainLogo
+            gapSize="6px"
+            chainId={item.chainId}
+            size={isXs ? '12px' : '14px'}
+            fontSize={isXs ? '12px' : '14px'}
+            fontWeight={500}
+          />
         </Box>
       </Box>
       <Box
-        mt={25}
+        mt={{ sm: 20, xs: 10 }}
         display="grid"
         sx={{
           background: theme.palette.background.paper,
           borderRadius: '8px',
-          padding: '10px'
+          padding: '16px'
         }}
       >
         {/* <Typography mb={6} fontSize={14} fontWeight={500}>
@@ -89,7 +99,7 @@ function EventCard({ item }: { item: EventProp }) {
         <Box
           sx={{
             fontSize: 14,
-            color: '#252525B2',
+            color: theme.textColor.text2,
             display: 'grid',
             gridTemplateColumns: '1fr 1fr'
             // '&>span:nth-child(even)': {

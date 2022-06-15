@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Tabs as MuiTabs, Tab } from '@mui/material'
+import { Tabs as MuiTabs, Tab, useTheme } from '@mui/material'
 
 export default function Tabs({
   titles,
@@ -13,6 +13,7 @@ export default function Tabs({
   minHeight?: number
   // onChange?: ((event: SyntheticEvent<Element, Event>, value: any) => void
 }) {
+  const theme = useTheme()
   const handleOnChange = useCallback(
     (e: React.ChangeEvent<any>, value: any) => {
       onChange(value)
@@ -40,20 +41,24 @@ export default function Tabs({
           label={tab}
           sx={{
             textTransform: 'none',
-            padding: '0 20px',
-            fontSize: 13,
+            padding: '6px 12px',
+            fontSize: 14,
             fontWeight: 500,
-            color: '#000000',
+            color: theme.textColor.text1,
             background: '#fff',
-            minHeight: minHeight || 48,
-            border: '1px solid rgba(22, 22, 22, 0.1)',
-            borderRadius: 60,
+            minHeight: minHeight || 42,
+            border: '1px solid #EEEEEE',
+            borderRadius: '8px',
+            '& img': {
+              opacity: 0.6
+            },
             '&.Mui-selected': {
-              opacity: 1,
-              background: '#000',
-              color: '#fff',
-              borderColor: 'transparent',
-              border: '1px solid #E5e5e5'
+              '& img': {
+                opacity: 1
+              },
+              color: theme.palette.text.primary,
+              background: theme.bgColor.bg2,
+              border: '1px solid #FFC400'
             }
           }}
         />

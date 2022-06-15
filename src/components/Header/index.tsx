@@ -18,13 +18,13 @@ import BrandLogo from 'assets/svg/mep_logo.svg'
 import { routes } from 'constants/routes'
 import MobileHeader from './MobileHeader'
 // import Button from 'components/Button/Button'
-import { ChainList } from 'constants/chain'
-import Web3Status from './Web3Status'
+// import { ChainList } from 'constants/chain'
+// import Web3Status from './Web3Status'
 import { ExternalLink } from 'theme/components'
-import { useActiveWeb3React } from 'hooks'
-import NetworkSelect from './NetworkSelect'
-import eventMenuIcon from 'assets/images/event_type_icon.png'
-import mepMenuIcon from 'assets/images/mep_icon.png'
+// import { useActiveWeb3React } from 'hooks'
+// import NetworkSelect from './NetworkSelect'
+import eventMenuIcon from 'assets/images/event_type_icon.svg'
+import mepMenuIcon from 'assets/images/mep_icon.svg'
 import dappMenuIcon from 'assets/images/dapp_icon.svg'
 
 interface TabContent {
@@ -40,15 +40,15 @@ interface Tab extends TabContent {
 }
 
 export const Tabs: Tab[] = [
-  { title: 'Events Type', route: routes.eventType, icon: <Image src={eventMenuIcon} width="24px" /> },
-  { title: 'MEP', route: routes.mep, icon: <Image src={mepMenuIcon} width="24px" /> },
-  { title: 'DAPP', route: routes.dapp, icon: <Image src={dappMenuIcon} width="24px" /> }
+  { title: 'Events Type', route: routes.eventType, icon: <Image src={eventMenuIcon} width="16px" /> },
+  { title: 'MEP', route: routes.mep, icon: <Image src={mepMenuIcon} width="16px" /> },
+  { title: 'DAPP', route: routes.dapp, icon: <Image src={dappMenuIcon} width="16px" /> }
 ]
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'fixed',
   height: theme.height.header,
-  borderBottom: '1px solid #00000020',
+  // borderBottom: '1px solid #00000020',
   backgroundColor: theme.palette.background.default,
   flexDirection: 'row',
   alignItems: 'center',
@@ -57,6 +57,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   padding: '0 60px 00 40px',
   zIndex: theme.zIndex.drawer + 1,
   [theme.breakpoints.down('md')]: {
+    display: 'none',
     position: 'fixed',
     bottom: 0,
     left: 0,
@@ -92,12 +93,16 @@ const MainLogo = styled(NavLink)({
 const StyledNavLink = styled(NavLink)(({ theme }) => ({
   textDecoration: 'none',
   color: theme.palette.text.primary,
-  opacity: 0.6,
+  padding: '10px 24px',
+  // opacity: 0.6,
   display: 'flex',
+  borderRadius: '8px',
   alignItems: 'center',
   filter: 'grayscale(1)',
   '&.active': {
     opacity: 1,
+    backgroundColor: theme.bgColor.bg2,
+    width: '100%',
     filter: 'unset',
     '& svg': {
       stroke: theme.palette.primary.main
@@ -115,7 +120,10 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
 const StyledExternalLink = styled(ExternalLink)(({ theme }) => ({
   textDecoration: 'none',
   color: theme.palette.text.primary,
-  opacity: 0.6,
+  padding: '10px 24px',
+  width: '100%',
+  borderRadius: '8px',
+  // opacity: 0.6,
   display: 'flex',
   alignItems: 'center',
   '&.active': {
@@ -138,34 +146,34 @@ const StyledExternalLink = styled(ExternalLink)(({ theme }) => ({
 // })
 
 export default function Header() {
-  const { chainId } = useActiveWeb3React()
+  // const { chainId } = useActiveWeb3React()
 
-  const selectedChain = useMemo(() => {
-    if (!chainId) return undefined
-    for (const item of ChainList) {
-      if (chainId === item.id) return item
-    }
-    return undefined
-  }, [chainId])
+  // const selectedChain = useMemo(() => {
+  //   if (!chainId) return undefined
+  //   for (const item of ChainList) {
+  //     if (chainId === item.id) return item
+  //   }
+  //   return undefined
+  // }, [chainId])
 
   const drawer = useMemo(
     () => (
       <Box
         sx={{
-          padding: '115px 44px',
+          padding: '104px 0 24px 24px',
           minHeight: '100%'
         }}
         gridTemplateRows="auto auto auto 1fr"
         display="grid"
-        justifyContent="space-between"
+        // justifyContent="space-between"
         gap="80px"
       >
-        <List>
+        <List sx={{ width: '100%' }}>
           {Tabs.map(({ title, route, icon, link }, idx) => (
-            <ListItem key={title} sx={{ padding: '12px 0' }}>
+            <ListItem key={title} sx={{ padding: '0', margin: '5px 0' }}>
               {link ? (
                 <StyledExternalLink href={link}>
-                  <ListItemIcon sx={{ color: 'currentColor', minWidth: 40 }}>{icon}</ListItemIcon>
+                  <ListItemIcon sx={{ color: 'currentColor', minWidth: 32 }}>{icon}</ListItemIcon>
                   <ListItemText
                     primary={title}
                     primaryTypographyProps={{
@@ -181,11 +189,11 @@ export default function Header() {
                   onClick={() => {}}
                   className="link"
                 >
-                  <ListItemIcon sx={{ color: 'currentColor', minWidth: 40 }}>{icon}</ListItemIcon>
+                  <ListItemIcon sx={{ color: 'currentColor', minWidth: 32 }}>{icon}</ListItemIcon>
                   <ListItemText
                     primary={title}
                     primaryTypographyProps={{
-                      sx: { fontSize: '16px', fontWeight: 500 }
+                      sx: { fontSize: '16px', fontWeight: 600 }
                     }}
                   />
                 </StyledNavLink>
@@ -193,9 +201,7 @@ export default function Header() {
             </ListItem>
           ))}
         </List>
-        <Box sx={{ position: 'fixed', bottom: '20px' }}>
-          <Web3Status />
-        </Box>
+        <Box sx={{ position: 'fixed', bottom: '20px' }}>{/* <Web3Status /> */}</Box>
         <Box sx={{ opacity: 0 }}>1</Box>
       </Box>
     ),
@@ -245,9 +251,9 @@ export default function Header() {
           </Box>
         </HideOnMobile>
         {/* <Web3Status /> */}
-        <Box display="flex" gap={16}>
+        {/* <Box display="flex" gap={16}>
           {selectedChain && <NetworkSelect />}
-        </Box>
+        </Box> */}
       </StyledAppBar>
       <Drawer
         variant="permanent"
@@ -260,7 +266,7 @@ export default function Header() {
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: theme.width.drawer,
-            background: '#FFFFFF'
+            backgroundColor: theme.palette.background.default
           }
         }}
         open
